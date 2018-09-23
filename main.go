@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"encoding/json"
 	"io"
 	"log"
@@ -10,37 +11,33 @@ import (
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	type JSONResponse struct {
-		Method           string
-		URL              string
-		Proto            string
-		ProtoMajor       int
-		ProtoMinor       int
-		Header           http.Header
-		Body             io.ReadCloser
-		ContentLength    int64
-		TransferEncoding []string
-		Host             string
-		Trailer          http.Header
-		RemoteAddr       string
-		RequestURI       string
-		Response         *http.Response
+		Method        string
+		URL           string
+		Proto         string
+		ProtoMajor    int
+		ProtoMinor    int
+		Header        http.Header
+		Body          io.ReadCloser
+		ContentLength int64
+		Host          string
+		RemoteAddr    string
+		RequestURI    string
+		TLS           *tls.ConnectionState
 	}
 
 	jsondata := JSONResponse{
-		Method:           r.Method,
-		URL:              r.URL.String(),
-		Proto:            r.Proto,
-		ProtoMajor:       r.ProtoMajor,
-		ProtoMinor:       r.ProtoMinor,
-		Header:           r.Header,
-		Body:             r.Body,
-		ContentLength:    r.ContentLength,
-		TransferEncoding: r.TransferEncoding,
-		Host:             r.Host,
-		Trailer:          r.Trailer,
-		RemoteAddr:       r.RemoteAddr,
-		RequestURI:       r.RequestURI,
-		Response:         r.Response,
+		Method:        r.Method,
+		URL:           r.URL.String(),
+		Proto:         r.Proto,
+		ProtoMajor:    r.ProtoMajor,
+		ProtoMinor:    r.ProtoMinor,
+		Header:        r.Header,
+		Body:          r.Body,
+		ContentLength: r.ContentLength,
+		Host:          r.Host,
+		RemoteAddr:    r.RemoteAddr,
+		RequestURI:    r.RequestURI,
+		TLS:           r.TLS,
 	}
 
 	jsonbytes, err := json.Marshal(jsondata)
