@@ -3,10 +3,10 @@ package main
 import (
 	"crypto/tls"
 	"encoding/json"
-	"io"
+	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
-	"net/url"
 	"os"
 )
 
@@ -21,24 +21,37 @@ func getEnv(envvar, def string) string {
 func handler(w http.ResponseWriter, r *http.Request) {
 	type JSONResponse struct {
 		Method        string
-		URL           *url.URL
+		Path          string
+		RawQuery      string
 		Protocol      string
 		Header        http.Header
-		Body          io.ReadCloser
+		Body          string
 		ContentLength int64
 		Host          string
 		RemoteAddr    string
+		Referer       string
 		TLS           *tls.ConnectionState
+	}
+
+	defer r.Body.Close()
+
+	bytesBody, err := ioutil.ReadAll(r.Body)
+	strBody := fmt.Sprintf("%s", bytesBody)
+
+	if err != nil {
+		log.Println(err)
 	}
 
 	jsondata := JSONResponse{
 		Method:        r.Method,
-		URL:           r.URL,
+		Path:          r.URL.Path,
+		RawQuery:      r.URL.RawQuery,
 		Protocol:      r.Proto,
 		Header:        r.Header,
-		Body:          r.Body,
+		Body:          strBody,
 		ContentLength: r.ContentLength,
 		Host:          r.Host,
+		Referer:       r.Referer(),
 		RemoteAddr:    r.RemoteAddr,
 		TLS:           r.TLS,
 	}
@@ -50,12 +63,25 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(jsonbytes)
+	log.Println(fmt.Sprintf("%s", jsonbytes))
 }
 
 func main() {
-	port := getEnv("PORT", "8080")
+	port := getEnv("HTTP_PORT", "8080")
+	tlsPort := getEnv("TLS_PORT", "8443")
+	tls := getEnv("TLS", "")
+
 	http.HandleFunc("/", handler)
+
 	log.Println("Starting go-http-echo")
-	log.Println("Listening on port:", port)
+
+	if tls == "enabled" {
+		log.Println("Listening for http/s on port:", tlsPort)
+		go func() {
+			log.Fatal(http.ListenAndServeTLS(":"+tlsPort, "server.crt", "server.key", nil))
+		}()
+	}
+
+	log.Println("Listening for http on port:", port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
