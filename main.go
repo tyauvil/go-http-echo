@@ -69,6 +69,8 @@ func handler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	port := getEnv("HTTP_PORT", "8080")
 	tlsPort := getEnv("TLS_PORT", "")
+	tlsCert := getEnv("TLS_CERT", "./server.crt")
+	tlsKey := getEnv("TLS_KEY", "./server.key")
 
 	http.HandleFunc("/", handler)
 
@@ -77,7 +79,7 @@ func main() {
 	if tlsPort != "" {
 		log.Println("Listening for http/s on port:", tlsPort)
 		go func() {
-			log.Fatal(http.ListenAndServeTLS(":"+tlsPort, "server.crt", "server.key", nil))
+			log.Fatal(http.ListenAndServeTLS(":"+tlsPort, tlsCert, tlsKey, nil))
 		}()
 	}
 
