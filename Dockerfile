@@ -12,9 +12,6 @@ RUN go install -ldflags="-s -w"
 # Release container
 FROM scratch as RELEASE
 
-ENV PORT=8080
-
 COPY --from=BUILD /go/bin/app /
 
-EXPOSE 8080
 ENTRYPOINT ["/app"]
