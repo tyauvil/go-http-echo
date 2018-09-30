@@ -3,5 +3,8 @@ version: "3"
 services:
   go-http-echo:
     build: .
+    environment:
+      - "TLS_PORT=8443"
     ports:
       - "8080:8080"
+      - "8443:8443"
