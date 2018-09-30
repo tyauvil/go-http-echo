@@ -8,3 +8,6 @@ services:
     ports:
       - "8080:8080"
       - "8443:8443"
+    volumes:
+      - "./server.crt:/server.crt"
+      - "./server.key:/server.key"
