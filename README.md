@@ -13,12 +13,16 @@ TLS_KEY   Defaults to ./server.key.
 ```
 
 #### Generate a TLS key/cert
+```
 openssl genrsa -out server.key 2048
 openssl ecparam -genkey -name secp384r1 -out server.key
 openssl req -new -x509 -sha256 -key server.key -out server.crt -days 3650
+```
 
 #### Running locally
 
 ```$ go run main.go```
+
 or
-```docker-compose up```
+
+```$ docker-compose up```
