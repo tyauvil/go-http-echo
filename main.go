@@ -67,7 +67,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	port := getEnv("HTTP_PORT", "8080")
+	port := getEnv("PORT", "8080")
 	tlsPort := getEnv("TLS_PORT", "")
 	tlsCert := getEnv("TLS_CERT", "./server.crt")
 	tlsKey := getEnv("TLS_KEY", "./server.key")
