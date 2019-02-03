@@ -6,7 +6,7 @@ This app responds to requests with the http request encoded in json.
 
 The following are configurable by environment variables:
 ```
-HTTP_PORT Defaults to 8080.
+PORT Defaults to 8080.
 TLS_PORT  Setting this port also enables TLS.
 TLS_CERT  Defaults to ./server.crt.
 TLS_KEY   Defaults to ./server.key.
